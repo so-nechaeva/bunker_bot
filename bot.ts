@@ -12,10 +12,21 @@ import http from 'http';
 // Создаём фейковый сервер для Render
 const port = process.env.PORT || 10000;
 http.createServer((req, res) => {
+  // Этот ответ увидит Render, когда пингует сервис
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Bot is running');
+  
+  // А это — самопинг, чтобы Render не усыплял бота
+  if (req.url === '/keep-alive') {
+      console.log('💓 Keep-alive ping received');
+  }
 }).listen(port, '0.0.0.0', () => {
   console.log(`✅ HTTP-сервер для Render запущен на порту ${port}`);
+  
+  // Пингуем себя каждые 12 минут (исключаем лимит Render)
+  setInterval(() => {
+    fetch(`http://localhost:${port}/keep-alive`).catch(() => {});
+  }, 12 * 60 * 1000); 
 });
 
 // Для ES-модулей — получаем __dirname
