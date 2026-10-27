@@ -7,6 +7,17 @@ import { open } from 'sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import http from 'http';
+
+// Создаём фейковый сервер для Render
+const port = process.env.PORT || 10000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot is running');
+}).listen(port, '0.0.0.0', () => {
+  console.log(`✅ HTTP-сервер для Render запущен на порту ${port}`);
+});
+
 // Для ES-модулей — получаем __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
